@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>我们的两周年 ❤️</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading">
+        <div class="loader-heart"></div>
+        <p class="loader-text">加载中...</p>
+    </div>
+
+    <!-- Main Content -->
+    <main id="app">
+        <!-- Hero Section -->
+        <section id="hero">
+            <canvas id="petalsCanvas"></canvas>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <p class="hero-date">2024.05.20</p>
+                <h1 class="hero-title">
+                    <span id="nameYou">小可爱</span>
+                    <span class="heart-icon">💕</span>
+                    <span id="nameMe">大笨蛋</span>
+                </h1>
+                <p class="hero-subtitle">在一起两周年快乐</p>
+                <div class="timer" id="timer">
+                    <div class="timer-unit">
+                        <span class="timer-number" id="days">000</span>
+                        <span class="timer-label">天</span>
+                    </div>
+                    <span class="timer-sep">:</span>
+                    <div class="timer-unit">
+                        <span class="timer-number" id="hours">00</span>
+                        <span class="timer-label">时</span>
+                    </div>
+                    <span class="timer-sep">:</span>
+                    <div class="timer-unit">
+                        <span class="timer-number" id="minutes">00</span>
+                        <span class="timer-label">分</span>
+                    </div>
+                    <span class="timer-sep">:</span>
+                    <div class="timer-unit">
+                        <span class="timer-number" id="seconds">00</span>
+                        <span class="timer-label">秒</span>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-hint">
+                <span>往下滑动</span>
+                <div class="scroll-arrow"></div>
+            </div>
+        </section>
+
+        <!-- Love Letter -->
+        <section id="love-letter">
+            <div class="section-header">
+                <h2 class="section-title">写给你</h2>
+                <div class="title-deco">💌</div>
+            </div>
+            <div class="letter-card">
+                <div class="letter-paper">
+                    <p id="typewriter" class="letter-text"><span class="cursor blink">|</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Photo Gallery -->
+        <section id="gallery">
+            <div class="section-header">
+                <h2 class="section-title">我们的回忆</h2>
+                <div class="title-deco">📸</div>
+            </div>
+            <div class="gallery-grid" id="galleryGrid"></div>
+            <div class="gallery-load-more" id="galleryLoadMore">
+                <button id="loadMoreBtn" class="btn-load-more">查看更多回忆 📸</button>
+            </div>
+        </section>
+
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox">
+            <span class="lb-close">&times;</span>
+            <span class="lb-nav lb-prev">&#10094;</span>
+            <span class="lb-nav lb-next">&#10095;</span>
+            <div class="lb-content">
+                <img id="lightboxImg" src="" alt="">
+                <p id="lightboxCaption"></p>
+            </div>
+        </div>
+
+        <!-- Milestones -->
+        <section id="milestones">
+            <div class="section-header">
+                <h2 class="section-title">我们的故事</h2>
+                <div class="title-deco">📖</div>
+            </div>
+            <div class="timeline" id="timeline"></div>
+        </section>
+
+        <!-- Places Visited -->
+        <section id="places-visited">
+            <div class="section-header">
+                <h2 class="section-title">一起去过的地方</h2>
+                <div class="title-deco">🗺️</div>
+            </div>
+            <div class="places-grid" id="visitedGrid"></div>
+        </section>
+
+        <!-- Wish List -->
+        <section id="wish-list">
+            <div class="section-header">
+                <h2 class="section-title">未来要去的地方</h2>
+                <div class="title-deco">✈️</div>
+            </div>
+            <div class="places-grid wish-grid" id="wishGrid"></div>
+        </section>
+
+        <!-- Reasons -->
+        <section id="reasons">
+            <div class="section-header">
+                <h2 class="section-title">喜欢你的理由</h2>
+                <div class="title-deco">💝</div>
+            </div>
+            <div class="reason-container" id="reasonContainer">
+                <div class="reason-card" id="reasonCard">
+                    <span class="reason-quote">"</span>
+                    <p id="reasonText"></p>
+                </div>
+                <button id="nextReason" class="btn-reason">
+                    <span>换个理由</span>
+                    <span class="btn-heart">💖</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <p class="footer-big">Forever &amp; Always</p>
+                <p class="footer-date">2024.05.20 — ∞</p>
+                <p class="footer-note">用 ❤️ 制作 · 献给我的小可爱</p>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Music Player -->
+    <div id="musicPlayer" class="music-player" title="播放音乐">
+        <button id="musicToggle" class="music-toggle">
+            <span class="music-icon">🎵</span>
+            <span class="music-ring"></span>
+        </button>
+        <span class="music-hint">点击播放音乐</span>
+    </div>
+    <audio id="bgm" loop preload="auto">
+        <source src="music/bgm.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="photos.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
