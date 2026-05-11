@@ -1,6 +1,7 @@
-# 照片和音乐（体积太大，请通过其他方式同步）
-Images/
+# 原始照片备份（不要提交）
 Images_original/
+
+# 音乐文件
 music/
 
 # Node
