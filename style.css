@@ -892,29 +892,35 @@ footer {
 
 .golden-text {
     font-family: var(--font-display);
-    font-size: clamp(20px, 4.5vw, 32px);
-    color: rgba(255, 255, 255, 0);
+    font-size: clamp(18px, 4vw, 30px);
+    color: var(--text-dark);
     text-align: center;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     line-height: 1.8;
-    padding: 0 32px;
-    max-width: 600px;
+    padding: 14px 28px;
+    max-width: 560px;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 14px;
+    box-shadow: 0 4px 30px rgba(74, 25, 66, 0.08);
     opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 1.5s ease, transform 1.5s ease, color 1.5s ease;
-    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
+    transform: translateY(20px);
+    filter: blur(4px);
 }
 
 .golden-text.visible {
     opacity: 1;
     transform: translateY(0);
-    color: rgba(255, 255, 255, 0.92);
+    filter: blur(0);
+    transition: opacity 1.6s ease-out, transform 1.6s ease-out, filter 1.2s ease-out;
 }
 
 .golden-text.fading {
     opacity: 0;
-    transform: translateY(-8px);
-    transition: opacity 2s ease, transform 2s ease, color 2s ease;
+    transform: translateY(-14px);
+    filter: blur(3px);
+    transition: opacity 2s ease-in, transform 2s ease-in, filter 1.5s ease-in;
 }
 
 /* ---------- Footer 完整歌词 ---------- */
@@ -1184,9 +1190,10 @@ footer {
     }
 
     .golden-text {
-        font-size: 18px;
+        font-size: 16px;
         letter-spacing: 2px;
-        padding: 0 24px;
+        padding: 12px 20px;
+        max-width: 320px;
     }
 
     .lyrics-full {

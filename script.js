@@ -685,11 +685,17 @@ function initMusicPlayer() {
 // ==================== 歌词同步 ====================
 let lyricsData = []; // [{time, text}]
 
-// 精选金句 — 只在最甜的时刻浮现
+// 精选金句 — 最甜的句子，随着音乐浮现
 const GOLDEN_LINES = [
+    { time: 32,  text: '琥珀色黄昏像糖在很美的远方' },
     { time: 36,  text: '你的脸没有化妆我却疯狂爱上' },
+    { time: 52,  text: '我却能够牢记你的气质跟脸庞' },
+    { time: 60,  text: '像我的喜欢，被你看穿' },
+    { time: 66,  text: '我悄悄出现你身旁' },
     { time: 78,  text: '我顶着大太阳，只想为你撑伞' },
+    { time: 86,  text: '因为捞鱼的蠢游戏我们开始交谈' },
     { time: 90,  text: '多希望话题不断，园游会永不打烊' },
+    { time: 101, text: '鸡蛋糕跟你嘴角果酱我都想要尝' },
     { time: 107, text: '这个世界约好一起逛' },
 ];
 
@@ -735,7 +741,13 @@ function initLyrics() {
     // 同步
     audio.addEventListener('timeupdate', () => {
         const t = audio.currentTime;
-        const loopTime = t % 207; // 歌曲长约 3:27
+        const songLength = 207; // 歌曲长约 3:27
+        const loopTime = t % songLength;
+
+        // 循环时重置
+        if (loopTime < GOLDEN_LINES[0].time) {
+            lastShown = -1;
+        }
 
         // 找当前时刻对应的金句
         let hit = -1;
@@ -755,13 +767,15 @@ function initLyrics() {
             // 显示金句
             quoteEl.textContent = GOLDEN_LINES[hit].text;
             quoteEl.classList.remove('fading');
+            // 强制回流，确保动画重新触发
+            void quoteEl.offsetWidth;
             quoteEl.classList.add('visible');
 
-            // 4 秒后淡出
+            // 3.5 秒后淡出
             hideTimer = setTimeout(() => {
                 quoteEl.classList.add('fading');
                 quoteEl.classList.remove('visible');
-            }, 4000);
+            }, 3500);
         }
 
         // Footer 高亮当前行
