@@ -879,49 +879,42 @@ footer {
     opacity: 0.8;
 }
 
-/* ---------- 浮动歌词 ---------- */
-.lyrics-float {
+/* ---------- 精选歌词金句 ---------- */
+.golden-quote {
     position: fixed;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
+    inset: 0;
     z-index: 6000;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     pointer-events: none;
+}
+
+.golden-text {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 4.5vw, 32px);
+    color: rgba(255, 255, 255, 0);
+    text-align: center;
+    letter-spacing: 4px;
+    line-height: 1.8;
+    padding: 0 32px;
+    max-width: 600px;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transform: translateY(12px);
+    transition: opacity 1.5s ease, transform 1.5s ease, color 1.5s ease;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
 }
 
-.lyrics-float.visible {
+.golden-text.visible {
     opacity: 1;
+    transform: translateY(0);
+    color: rgba(255, 255, 255, 0.92);
 }
 
-.lyrics-line {
-    margin: 0;
-    font-size: 15px;
-    letter-spacing: 2px;
-    color: var(--text-dark);
-    transition: all 0.5s ease;
-    padding: 4px 20px;
-    border-radius: 20px;
-    white-space: nowrap;
-}
-
-.lyrics-current {
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--pink-deep);
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 2px 16px rgba(196, 69, 105, 0.1);
-    margin-bottom: 4px;
-}
-
-.lyrics-next {
-    font-size: 13px;
-    color: var(--text-light);
-    opacity: 0.6;
+.golden-text.fading {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 2s ease, transform 2s ease, color 2s ease;
 }
 
 /* ---------- Footer 完整歌词 ---------- */
@@ -1190,17 +1183,10 @@ footer {
         text-indent: 1.5em;
     }
 
-    .lyrics-float {
-        bottom: 80px;
-    }
-
-    .lyrics-current {
-        font-size: 14px;
-        padding: 4px 14px;
-    }
-
-    .lyrics-next {
-        font-size: 11px;
+    .golden-text {
+        font-size: 18px;
+        letter-spacing: 2px;
+        padding: 0 24px;
     }
 
     .lyrics-full {

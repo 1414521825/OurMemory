@@ -685,9 +685,16 @@ function initMusicPlayer() {
 // ==================== 歌词同步 ====================
 let lyricsData = []; // [{time, text}]
 
+// 精选金句 — 只在最甜的时刻浮现
+const GOLDEN_LINES = [
+    { time: 36,  text: '你的脸没有化妆我却疯狂爱上' },
+    { time: 78,  text: '我顶着大太阳，只想为你撑伞' },
+    { time: 90,  text: '多希望话题不断，园游会永不打烊' },
+    { time: 107, text: '这个世界约好一起逛' },
+];
+
 function parseLRC(text) {
     const lines = [];
-    // 匹配 [mm:ss.xx] 或 [mm:ss.xxx] 格式
     const regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
     text.split('\n').forEach(line => {
         const match = line.match(regex);
@@ -704,67 +711,76 @@ function parseLRC(text) {
 }
 
 function initLyrics() {
-    const floatEl = document.getElementById('lyricsFloat');
-    const currentEl = document.getElementById('lyricsCurrent');
-    const nextEl = document.getElementById('lyricsNext');
+    const quoteEl = document.getElementById('goldenText');
     const fullEl = document.getElementById('lyricsFull');
     const audio = document.getElementById('bgm');
+    let lastShown = -1;
+    let hideTimer = null;
 
-    // 加载 LRC 文件
+    // 加载 LRC 构建 Footer
     fetch(CONFIG.lyricsPath)
         .then(res => res.text())
         .then(text => {
             lyricsData = parseLRC(text);
-            buildFooterLyrics(fullEl);
+            fullEl.innerHTML =
+                '<p class="lyrics-full-title">🎵 园游会 — 周杰伦</p>' +
+                lyricsData.map(line =>
+                    `<p data-time="${line.time}">${line.text}</p>`
+                ).join('');
         })
         .catch(() => {
-            // LRC 加载失败，隐藏相关元素
-            floatEl.style.display = 'none';
             fullEl.style.display = 'none';
         });
 
-    // 构建 Footer 完整歌词
-    function buildFooterLyrics(container) {
-        container.innerHTML =
-            '<p class="lyrics-full-title">🎵 园游会 — 周杰伦</p>' +
-            lyricsData.map(line =>
-                `<p data-time="${line.time}">${line.text}</p>`
-            ).join('');
-    }
-
-    // 同步当前播放时间
+    // 同步
     audio.addEventListener('timeupdate', () => {
-        if (lyricsData.length === 0) return;
-
         const t = audio.currentTime;
-        let idx = -1;
-        for (let i = lyricsData.length - 1; i >= 0; i--) {
-            if (t >= lyricsData[i].time) { idx = i; break; }
+        const loopTime = t % 207; // 歌曲长约 3:27
+
+        // 找当前时刻对应的金句
+        let hit = -1;
+        for (let i = GOLDEN_LINES.length - 1; i >= 0; i--) {
+            if (loopTime >= GOLDEN_LINES[i].time) {
+                hit = i;
+                break;
+            }
         }
 
-        if (idx === -1) {
-            // 还没到第一句
-            floatEl.classList.remove('visible');
-            return;
+        if (hit !== lastShown && hit >= 0) {
+            lastShown = hit;
+
+            // 清除旧定时器
+            if (hideTimer) clearTimeout(hideTimer);
+
+            // 显示金句
+            quoteEl.textContent = GOLDEN_LINES[hit].text;
+            quoteEl.classList.remove('fading');
+            quoteEl.classList.add('visible');
+
+            // 4 秒后淡出
+            hideTimer = setTimeout(() => {
+                quoteEl.classList.add('fading');
+                quoteEl.classList.remove('visible');
+            }, 4000);
         }
 
-        // 浮动歌词
-        floatEl.classList.add('visible');
-        currentEl.textContent = lyricsData[idx].text;
-        nextEl.textContent = idx + 1 < lyricsData.length ? lyricsData[idx + 1].text : '';
-
-        // Footer 高亮
-        fullEl.querySelectorAll('p[data-time]').forEach((p, i) => {
-            p.classList.toggle('highlight', i === idx);
-        });
+        // Footer 高亮当前行
+        if (lyricsData.length > 0) {
+            let idx = -1;
+            for (let i = lyricsData.length - 1; i >= 0; i--) {
+                if (loopTime >= lyricsData[i].time) { idx = i; break; }
+            }
+            fullEl.querySelectorAll('p[data-time]').forEach((p, i) => {
+                p.classList.toggle('highlight', i === idx);
+            });
+        }
     });
 
-    // 暂停时隐藏浮动歌词
+    // 暂停时立即隐藏
     audio.addEventListener('pause', () => {
-        floatEl.classList.remove('visible');
-    });
-    audio.addEventListener('play', () => {
-        if (lyricsData.length > 0) floatEl.classList.add('visible');
+        quoteEl.classList.add('fading');
+        quoteEl.classList.remove('visible');
+        if (hideTimer) clearTimeout(hideTimer);
     });
 }
 
