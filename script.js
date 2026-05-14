@@ -724,14 +724,16 @@ function parseLRC(text) {
 }
 
 function initLyrics() {
-    const quoteEl = document.getElementById('goldenText');
     const subtitleBar = document.getElementById('subtitleBar');
     const subtitleText = document.getElementById('subtitleText');
     const fullEl = document.getElementById('lyricsFull');
     const audio = document.getElementById('bgm');
-    let lastGoldenIdx = -1;
+    let lastGoldenText = '';
     let hideTimer = null;
     let typeTimer = null;
+
+    // 构建金句文本集合，用于匹配
+    const goldenTextSet = new Set(GOLDEN_LINES.map(g => g.text));
 
     // 加载 LRC 构建 Footer
     fetch(CONFIG.lyricsPath)
@@ -748,7 +750,7 @@ function initLyrics() {
             fullEl.style.display = 'none';
         });
 
-    // 同步：常驻字幕 + 金句高光
+    // 同步
     audio.addEventListener('timeupdate', () => {
         const t = audio.currentTime;
         const songLength = audio.duration || 207;
@@ -758,70 +760,61 @@ function initLyrics() {
 
         // 循环时重置
         if (loopTime < GOLDEN_LINES[0].time) {
-            lastGoldenIdx = -1;
+            lastGoldenText = '';
         }
 
-        // --- 常驻字幕：找到当前歌词行 ---
+        // 找到当前歌词行
         let lyricIdx = -1;
         for (let i = lyricsData.length - 1; i >= 0; i--) {
             if (loopTime >= lyricsData[i].time) { lyricIdx = i; break; }
         }
 
-        if (lyricIdx >= 0) {
-            subtitleText.textContent = lyricsData[lyricIdx].text;
-            subtitleBar.classList.add('visible');
-        } else {
+        if (lyricIdx < 0) {
             subtitleBar.classList.remove('visible');
+            return;
         }
 
-        // --- 金句高光：检查是否触发 ---
-        let goldenIdx = -1;
-        for (let i = GOLDEN_LINES.length - 1; i >= 0; i--) {
-            if (loopTime >= GOLDEN_LINES[i].time) {
-                goldenIdx = i;
-                break;
-            }
-        }
+        const currentText = lyricsData[lyricIdx].text;
+        subtitleBar.classList.add('visible');
 
-        if (goldenIdx !== lastGoldenIdx && goldenIdx >= 0) {
-            lastGoldenIdx = goldenIdx;
+        // 判断是否金句
+        if (goldenTextSet.has(currentText) && currentText !== lastGoldenText) {
+            lastGoldenText = currentText;
 
             if (hideTimer) clearTimeout(hideTimer);
             if (typeTimer) clearTimeout(typeTimer);
 
-            const fullText = GOLDEN_LINES[goldenIdx].text;
-            let charIdx = 0;
-            quoteEl.textContent = '';
-            quoteEl.classList.remove('fading', 'breathing');
-            void quoteEl.offsetWidth;
-            quoteEl.classList.add('typing');
-
-            // 底部字幕变暗
-            subtitleBar.classList.add('dimmed');
-
             // 逐字打出
+            let charIdx = 0;
+            subtitleText.textContent = '';
+            subtitleText.classList.add('golden');
+            subtitleText.classList.remove('breathing');
+
             const typeChar = () => {
-                if (charIdx < fullText.length) {
-                    quoteEl.textContent += fullText[charIdx];
+                if (charIdx < currentText.length) {
+                    subtitleText.textContent += currentText[charIdx];
                     charIdx++;
                     typeTimer = setTimeout(typeChar, 55);
                 } else {
-                    // 打完 → 开始呼吸
-                    quoteEl.classList.remove('typing');
-                    quoteEl.classList.add('breathing');
-
-                    // 呼吸 2.5s 后消散
+                    // 打完 → 呼吸
+                    subtitleText.classList.add('breathing');
+                    // 2.5s 后变回普通字幕
                     hideTimer = setTimeout(() => {
-                        quoteEl.classList.add('fading');
-                        quoteEl.classList.remove('breathing');
-                        subtitleBar.classList.remove('dimmed');
+                        subtitleText.classList.remove('golden', 'breathing');
+                        subtitleText.textContent = currentText;
                     }, 2500);
                 }
             };
             typeTimer = setTimeout(typeChar, 55);
+        } else if (!goldenTextSet.has(currentText)) {
+            // 普通歌词：直接显示
+            subtitleText.textContent = currentText;
+            subtitleText.classList.remove('golden', 'breathing');
+            lastGoldenText = '';
         }
+        // 金句持续期间（breathing），不更新文本
 
-        // Footer 高亮当前行
+        // Footer 高亮
         fullEl.querySelectorAll('p[data-time]').forEach((p, i) => {
             p.classList.toggle('highlight', i === lyricIdx);
         });
@@ -830,14 +823,11 @@ function initLyrics() {
     // 暂停时隐藏
     audio.addEventListener('pause', () => {
         subtitleBar.classList.remove('visible');
-        quoteEl.classList.add('fading');
-        quoteEl.classList.remove('typing', 'breathing');
-        subtitleBar.classList.remove('dimmed');
+        subtitleText.classList.remove('golden', 'breathing');
         if (hideTimer) clearTimeout(hideTimer);
         if (typeTimer) clearTimeout(typeTimer);
     });
 
-    // 播放时恢复字幕
     audio.addEventListener('play', () => {
         if (lyricsData.length > 0) subtitleBar.classList.add('visible');
     });

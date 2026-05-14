@@ -879,7 +879,7 @@ footer {
     opacity: 0.8;
 }
 
-/* ---------- 底部常驻字幕 ---------- */
+/* ---------- 底部歌词字幕 ---------- */
 .subtitle-bar {
     position: fixed;
     bottom: 90px;
@@ -895,84 +895,48 @@ footer {
     opacity: 1;
 }
 
-.subtitle-bar.dimmed {
-    opacity: 0.25;
-}
-
 .subtitle-text {
     margin: 0;
-    font-size: 14px;
+    font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+    font-size: 16px;
     color: var(--text-dark);
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     text-align: center;
-    padding: 6px 18px;
-    background: rgba(255, 255, 255, 0.5);
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.45);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    border-radius: 12px;
-    transition: all 0.6s ease;
+    border-radius: 10px;
+    transition: color 0.4s ease, text-shadow 0.4s ease;
     white-space: nowrap;
 }
 
-/* ---------- 精选歌词金句 ---------- */
-.golden-quote {
-    position: fixed;
-    inset: 0;
-    z-index: 6000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-}
-
-.golden-text {
-    font-family: 'STKaiti', 'KaiTi', '楷体', 'STSong', serif;
-    font-size: clamp(22px, 5vw, 38px);
-    color: #e8c56d;
-    text-align: center;
-    letter-spacing: 5px;
-    line-height: 2;
-    padding: 0 36px;
-    max-width: 620px;
-    background: none;
-    opacity: 0;
+/* 金句呼吸状态：粉色光晕 */
+.subtitle-text.golden {
+    color: #d4687c;
     text-shadow:
-        0 0 16px rgba(232, 197, 109, 0.7),
-        0 0 40px rgba(232, 180, 90, 0.4),
-        0 0 80px rgba(200, 150, 60, 0.25),
-        0 0 140px rgba(180, 120, 40, 0.12);
-    transition: opacity 0.3s ease;
+        0 0 10px rgba(212, 104, 124, 0.6),
+        0 0 24px rgba(212, 104, 124, 0.35),
+        0 0 44px rgba(196, 80, 105, 0.2);
 }
 
-.golden-text.typing {
-    opacity: 0.85;
+.subtitle-text.golden.breathing {
+    animation: subtitleBreathe 2.6s ease-in-out infinite;
 }
 
-.golden-text.breathing {
-    animation: goldenBreathe 3s ease-in-out infinite;
-}
-
-.golden-text.fading {
-    opacity: 0;
-    animation: none;
-    transition: opacity 0.8s ease-out;
-}
-
-@keyframes goldenBreathe {
+@keyframes subtitleBreathe {
     0%, 100% {
-        transform: scale(1);
         text-shadow:
-            0 0 16px rgba(232, 197, 109, 0.7),
-            0 0 40px rgba(232, 180, 90, 0.4),
-            0 0 80px rgba(200, 150, 60, 0.25);
+            0 0 10px rgba(212, 104, 124, 0.6),
+            0 0 24px rgba(212, 104, 124, 0.35),
+            0 0 44px rgba(196, 80, 105, 0.2);
     }
     50% {
-        transform: scale(1.04);
         text-shadow:
-            0 0 26px rgba(232, 197, 109, 0.9),
-            0 0 60px rgba(232, 180, 90, 0.6),
-            0 0 100px rgba(200, 150, 60, 0.4),
-            0 0 180px rgba(180, 120, 40, 0.2);
+            0 0 18px rgba(212, 104, 124, 0.85),
+            0 0 36px rgba(212, 104, 124, 0.55),
+            0 0 60px rgba(196, 80, 105, 0.35),
+            0 0 90px rgba(196, 80, 105, 0.15);
     }
 }
 
@@ -1242,20 +1206,14 @@ footer {
         text-indent: 1.5em;
     }
 
-    .golden-text {
-        font-size: 18px;
-        letter-spacing: 3px;
-        padding: 0 24px;
-        max-width: 340px;
-    }
-
     .subtitle-bar {
         bottom: 72px;
     }
 
     .subtitle-text {
-        font-size: 12px;
-        padding: 5px 14px;
+        font-size: 13px;
+        padding: 6px 14px;
+        letter-spacing: 2px;
     }
 
     .lyrics-full {
