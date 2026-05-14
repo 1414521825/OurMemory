@@ -725,9 +725,11 @@ function parseLRC(text) {
 
 function initLyrics() {
     const quoteEl = document.getElementById('goldenText');
+    const subtitleBar = document.getElementById('subtitleBar');
+    const subtitleText = document.getElementById('subtitleText');
     const fullEl = document.getElementById('lyricsFull');
     const audio = document.getElementById('bgm');
-    let lastShown = -1;
+    let lastGoldenIdx = -1;
     let hideTimer = null;
 
     // 加载 LRC 构建 Footer
@@ -745,65 +747,81 @@ function initLyrics() {
             fullEl.style.display = 'none';
         });
 
-    // 同步
+    // 同步：常驻字幕 + 金句高光
     audio.addEventListener('timeupdate', () => {
         const t = audio.currentTime;
         const songLength = audio.duration || 207;
-        if (!songLength) return;
+        if (!songLength || lyricsData.length === 0) return;
 
         const loopTime = t % songLength;
 
         // 循环时重置
         if (loopTime < GOLDEN_LINES[0].time) {
-            lastShown = -1;
+            lastGoldenIdx = -1;
         }
 
-        // 找当前时刻对应的金句
-        let hit = -1;
+        // --- 常驻字幕：找到当前歌词行 ---
+        let lyricIdx = -1;
+        for (let i = lyricsData.length - 1; i >= 0; i--) {
+            if (loopTime >= lyricsData[i].time) { lyricIdx = i; break; }
+        }
+
+        if (lyricIdx >= 0) {
+            subtitleText.textContent = lyricsData[lyricIdx].text;
+            subtitleBar.classList.add('visible');
+        } else {
+            subtitleBar.classList.remove('visible');
+        }
+
+        // --- 金句高光：检查是否触发 ---
+        let goldenIdx = -1;
         for (let i = GOLDEN_LINES.length - 1; i >= 0; i--) {
             if (loopTime >= GOLDEN_LINES[i].time) {
-                hit = i;
+                goldenIdx = i;
                 break;
             }
         }
 
-        if (hit !== lastShown && hit >= 0) {
-            lastShown = hit;
+        if (goldenIdx !== lastGoldenIdx && goldenIdx >= 0) {
+            lastGoldenIdx = goldenIdx;
 
-            // 清除旧定时器
             if (hideTimer) clearTimeout(hideTimer);
 
-            // 显示金句
-            quoteEl.textContent = GOLDEN_LINES[hit].text;
+            // 金句全屏显示
+            quoteEl.textContent = GOLDEN_LINES[goldenIdx].text;
             quoteEl.classList.remove('fading');
-            // 强制回流，确保动画重新触发
             void quoteEl.offsetWidth;
             quoteEl.classList.add('visible');
 
-            // 3.5 秒后淡出
+            // 底部字幕变暗
+            subtitleBar.classList.add('dimmed');
+
+            // 3.5 秒后金句消散，字幕恢复
             hideTimer = setTimeout(() => {
                 quoteEl.classList.add('fading');
                 quoteEl.classList.remove('visible');
+                subtitleBar.classList.remove('dimmed');
             }, 3500);
         }
 
         // Footer 高亮当前行
-        if (lyricsData.length > 0) {
-            let idx = -1;
-            for (let i = lyricsData.length - 1; i >= 0; i--) {
-                if (loopTime >= lyricsData[i].time) { idx = i; break; }
-            }
-            fullEl.querySelectorAll('p[data-time]').forEach((p, i) => {
-                p.classList.toggle('highlight', i === idx);
-            });
-        }
+        fullEl.querySelectorAll('p[data-time]').forEach((p, i) => {
+            p.classList.toggle('highlight', i === lyricIdx);
+        });
     });
 
-    // 暂停时立即隐藏
+    // 暂停时隐藏
     audio.addEventListener('pause', () => {
+        subtitleBar.classList.remove('visible');
         quoteEl.classList.add('fading');
         quoteEl.classList.remove('visible');
+        subtitleBar.classList.remove('dimmed');
         if (hideTimer) clearTimeout(hideTimer);
+    });
+
+    // 播放时恢复字幕
+    audio.addEventListener('play', () => {
+        if (lyricsData.length > 0) subtitleBar.classList.add('visible');
     });
 }
 
