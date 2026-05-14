@@ -624,16 +624,37 @@ function initMusicPlayer() {
     const hint = player.querySelector('.music-hint');
 
     let isPlaying = false;
+    let autoTriggered = false;
 
-    // 检测音频文件是否可加载
+    // 音频加载失败
     audio.addEventListener('error', () => {
         toggle.style.opacity = '0.5';
-        hint.textContent = '请放入 music/bgm.mp3';
+        hint.textContent = '音乐加载失败';
         hint.style.color = '#C44569';
     });
 
+    // 播放函数
+    function tryPlay() {
+        if (audio.error) return;
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                toggle.classList.add('playing');
+                hint.textContent = '正在播放...';
+                isPlaying = true;
+            }).catch(() => {
+                // 自动播放被阻止 — 脉冲按钮提醒
+                player.classList.add('call-attention');
+                hint.textContent = '点我播放 🎵';
+            });
+        }
+    }
+
+    // 手动点击切换
     toggle.addEventListener('click', () => {
         if (audio.error) return;
+
+        player.classList.remove('call-attention');
 
         if (isPlaying) {
             audio.pause();
@@ -641,32 +662,20 @@ function initMusicPlayer() {
             hint.textContent = '点击播放音乐';
             isPlaying = false;
         } else {
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    toggle.classList.add('playing');
-                    hint.textContent = '正在播放...';
-                    isPlaying = true;
-                }).catch(() => {
-                    // 自动播放被阻止，用户需要手动点击
-                    hint.textContent = '再点一次播放';
-                });
-            }
+            tryPlay();
         }
     });
 
-    // 首次用户交互时尝试自动播放
-    let autoPlayAttempted = false;
-    document.addEventListener('click', () => {
-        if (!autoPlayAttempted && !isPlaying && !audio.error) {
-            autoPlayAttempted = true;
-            audio.play().then(() => {
-                toggle.classList.add('playing');
-                hint.textContent = '正在播放...';
-                isPlaying = true;
-            }).catch(() => {});
+    // 滚动到告白信时自动尝试播放
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !autoTriggered) {
+            autoTriggered = true;
+            tryPlay();
         }
-    }, { once: true });
+    }, { threshold: 0.5 });
+
+    const loveLetter = document.getElementById('love-letter');
+    if (loveLetter) observer.observe(loveLetter);
 }
 
 // ==================== 滚动显示动画 ====================

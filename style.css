@@ -879,7 +879,26 @@ footer {
     opacity: 0.8;
 }
 
+/* 音乐等待用户点击时的脉冲动画 */
+.music-player.call-attention .music-toggle {
+    animation: attentionPulse 1.2s ease-in-out infinite;
+    box-shadow: 0 0 24px rgba(255, 107, 157, 0.5);
+}
+
+.music-player.call-attention .music-hint {
+    color: var(--pink-deep);
+    font-weight: 600;
+    opacity: 1;
+    animation: fadeInOut 1.2s ease-in-out infinite;
+}
+
 /* ---------- Keyframes ---------- */
+@keyframes attentionPulse {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.12); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.08); }
+}
 @keyframes heartbeat {
     0%, 100% { transform: rotate(45deg) scale(1); }
     14% { transform: rotate(45deg) scale(1.25); }
