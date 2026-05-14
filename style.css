@@ -879,92 +879,6 @@ footer {
     opacity: 0.8;
 }
 
-/* ---------- 浮动歌词 ---------- */
-.lyrics-float {
-    position: fixed;
-    bottom: 96px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 5500;
-    text-align: center;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.lyrics-float.visible {
-    opacity: 1;
-}
-
-.lyrics-line {
-    margin: 0;
-    letter-spacing: 2px;
-    padding: 5px 18px;
-    border-radius: 16px;
-    white-space: nowrap;
-    transition: all 0.5s ease;
-}
-
-.lyrics-current {
-    font-family: 'YouYuan', '幼圆', 'STYuanti', 'PingFang SC', sans-serif;
-    font-size: 17px;
-    font-weight: 500;
-    color: #B0889A;
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 2px 12px rgba(74, 25, 66, 0.06);
-    margin-bottom: 4px;
-}
-
-.lyrics-current .char {
-    transition: color 0.2s ease, text-shadow 0.2s ease;
-}
-
-.lyrics-current .char.active {
-    color: var(--pink-deep);
-    font-weight: 700;
-    text-shadow: 0 0 8px rgba(196, 69, 105, 0.3);
-}
-
-.lyrics-next {
-    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    font-size: 12px;
-    color: var(--text-light);
-    opacity: 0.5;
-}
-
-/* ---------- Footer 完整歌词 ---------- */
-.lyrics-full {
-    max-width: 400px;
-    margin: 48px auto 0;
-    padding: 36px 24px;
-    text-align: center;
-    border-top: 1px solid rgba(196, 69, 105, 0.15);
-}
-
-.lyrics-full-title {
-    font-family: var(--font-display);
-    font-size: 17px;
-    color: var(--pink-deep);
-    margin-bottom: 20px;
-    letter-spacing: 2px;
-}
-
-.lyrics-full p {
-    font-size: 14px;
-    color: var(--text-light);
-    line-height: 2.2;
-    margin: 0;
-    letter-spacing: 1px;
-    transition: color 0.3s ease;
-}
-
-.lyrics-full p.highlight {
-    color: var(--pink-deep);
-    font-weight: 600;
-}
-
 /* 音乐等待用户点击时的脉冲动画 */
 .music-player.call-attention .music-toggle {
     animation: attentionPulse 1.2s ease-in-out infinite;
@@ -1200,25 +1114,4 @@ footer {
         text-indent: 1.5em;
     }
 
-    .lyrics-float {
-        bottom: 76px;
-    }
-
-    .lyrics-current {
-        font-size: 14px;
-        padding: 5px 14px;
-    }
-
-    .lyrics-next {
-        font-size: 11px;
-    }
-
-    .lyrics-full {
-        padding: 24px 16px;
-    }
-
-    .lyrics-full p {
-        font-size: 12px;
-        line-height: 2;
-    }
 }

@@ -115,8 +115,6 @@ const CONFIG = {
     // 背景音乐文件路径
     musicPath: 'music/周杰伦 - 园游会.mp3',
 
-    // 歌词 LRC 文件路径
-    lyricsPath: 'music/园游会-周杰伦-歌词.lrc',
 };
 
 // ==================== 初始化 ====================
@@ -129,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initPlaces();
     initReasons();
     initMusicPlayer();
-    initLyrics();
     initScrollReveal();
     initTypewriter();
     initLightbox();
@@ -680,102 +677,6 @@ function initMusicPlayer() {
 
     const loveLetter = document.getElementById('love-letter');
     if (loveLetter) observer.observe(loveLetter);
-}
-
-// ==================== 歌词同步 ====================
-let lyricsData = []; // [{time, text}]
-
-function parseLRC(text) {
-    const lines = [];
-    const regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
-    text.split('\n').forEach(line => {
-        const match = line.match(regex);
-        if (match) {
-            const minutes = parseInt(match[1]);
-            const seconds = parseInt(match[2]);
-            const ms = parseInt(match[3].padEnd(3, '0'));
-            const time = minutes * 60 + seconds + ms / 1000;
-            const txt = match[4].trim();
-            if (txt) lines.push({ time, text: txt });
-        }
-    });
-    return lines;
-}
-
-function initLyrics() {
-    const floatEl = document.getElementById('lyricsFloat');
-    const currentEl = document.getElementById('lyricsCurrent');
-    const nextEl = document.getElementById('lyricsNext');
-    const fullEl = document.getElementById('lyricsFull');
-    const audio = document.getElementById('bgm');
-
-    // 加载 LRC 构建 Footer
-    fetch(CONFIG.lyricsPath)
-        .then(res => res.text())
-        .then(text => {
-            lyricsData = parseLRC(text);
-            fullEl.innerHTML =
-                '<p class="lyrics-full-title">🎵 园游会 — 周杰伦</p>' +
-                lyricsData.map(line =>
-                    `<p data-time="${line.time}">${line.text}</p>`
-                ).join('');
-        })
-        .catch(() => {
-            fullEl.style.display = 'none';
-        });
-
-    // 同步
-    audio.addEventListener('timeupdate', () => {
-        if (lyricsData.length === 0) return;
-
-        const t = audio.currentTime;
-        const songLength = audio.duration || 207;
-        if (!songLength) return;
-
-        const loopTime = t % songLength;
-
-        let idx = -1;
-        for (let i = lyricsData.length - 1; i >= 0; i--) {
-            if (loopTime >= lyricsData[i].time) { idx = i; break; }
-        }
-
-        if (idx < 0) {
-            floatEl.classList.remove('visible');
-            return;
-        }
-
-        floatEl.classList.add('visible');
-
-        // 当前行逐字高亮
-        const lineStart = lyricsData[idx].time;
-        const lineEnd = idx + 1 < lyricsData.length
-            ? lyricsData[idx + 1].time
-            : Math.min(lineStart + 4, songLength);
-        const lineDuration = Math.max(lineEnd - lineStart, 0.5);
-        const progress = Math.min((loopTime - lineStart) / lineDuration, 1);
-        const text = lyricsData[idx].text;
-        const charCount = text.length;
-        const activeChars = Math.floor(progress * charCount);
-
-        let html = '';
-        for (let c = 0; c < charCount; c++) {
-            html += `<span class="char${c < activeChars ? ' active' : ''}">${text[c]}</span>`;
-        }
-        currentEl.innerHTML = html;
-
-        nextEl.textContent = idx + 1 < lyricsData.length ? lyricsData[idx + 1].text : '';
-
-        // Footer 高亮
-        fullEl.querySelectorAll('p[data-time]').forEach((p, i) => {
-            p.classList.toggle('highlight', i === idx);
-        });
-    });
-
-    // 暂停 / 播放
-    audio.addEventListener('pause', () => floatEl.classList.remove('visible'));
-    audio.addEventListener('play', () => {
-        if (lyricsData.length > 0) floatEl.classList.add('visible');
-    });
 }
 
 // ==================== 滚动显示动画 ====================
