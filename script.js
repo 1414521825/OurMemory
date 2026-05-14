@@ -113,7 +113,7 @@ const CONFIG = {
     photos: window.CONFIG_PHOTOS || [],
 
     // 背景音乐文件路径
-    musicPath: 'music/bgm.mp3',
+    musicPath: 'music/周杰伦 - 园游会.mp3',
 };
 
 // ==================== 初始化 ====================
