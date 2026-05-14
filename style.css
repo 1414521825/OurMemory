@@ -879,6 +879,82 @@ footer {
     opacity: 0.8;
 }
 
+/* ---------- 浮动歌词 ---------- */
+.lyrics-float {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6000;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.lyrics-float.visible {
+    opacity: 1;
+}
+
+.lyrics-line {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: 2px;
+    color: var(--text-dark);
+    transition: all 0.5s ease;
+    padding: 4px 20px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.lyrics-current {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--pink-deep);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 2px 16px rgba(196, 69, 105, 0.1);
+    margin-bottom: 4px;
+}
+
+.lyrics-next {
+    font-size: 13px;
+    color: var(--text-light);
+    opacity: 0.6;
+}
+
+/* ---------- Footer 完整歌词 ---------- */
+.lyrics-full {
+    max-width: 400px;
+    margin: 48px auto 0;
+    padding: 36px 24px;
+    text-align: center;
+    border-top: 1px solid rgba(196, 69, 105, 0.15);
+}
+
+.lyrics-full-title {
+    font-family: var(--font-display);
+    font-size: 17px;
+    color: var(--pink-deep);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.lyrics-full p {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 2.2;
+    margin: 0;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+.lyrics-full p.highlight {
+    color: var(--pink-deep);
+    font-weight: 600;
+}
+
 /* 音乐等待用户点击时的脉冲动画 */
 .music-player.call-attention .music-toggle {
     animation: attentionPulse 1.2s ease-in-out infinite;
@@ -1112,5 +1188,27 @@ footer {
     .letter-text {
         font-size: 14px;
         text-indent: 1.5em;
+    }
+
+    .lyrics-float {
+        bottom: 80px;
+    }
+
+    .lyrics-current {
+        font-size: 14px;
+        padding: 4px 14px;
+    }
+
+    .lyrics-next {
+        font-size: 11px;
+    }
+
+    .lyrics-full {
+        padding: 24px 16px;
+    }
+
+    .lyrics-full p {
+        font-size: 12px;
+        line-height: 2;
     }
 }
