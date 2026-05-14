@@ -685,18 +685,25 @@ function initMusicPlayer() {
 // ==================== 歌词同步 ====================
 let lyricsData = []; // [{time, text}]
 
-// 精选金句 — 最甜的句子，随着音乐浮现
+// 精选金句 — 覆盖两段主歌+副歌
 const GOLDEN_LINES = [
+    // 第一段 主歌 (00:32-01:00)
     { time: 32,  text: '琥珀色黄昏像糖在很美的远方' },
     { time: 36,  text: '你的脸没有化妆我却疯狂爱上' },
     { time: 52,  text: '我却能够牢记你的气质跟脸庞' },
     { time: 60,  text: '像我的喜欢，被你看穿' },
     { time: 66,  text: '我悄悄出现你身旁' },
+    // 第一段 副歌 (01:18-01:47)
     { time: 78,  text: '我顶着大太阳，只想为你撑伞' },
     { time: 86,  text: '因为捞鱼的蠢游戏我们开始交谈' },
     { time: 90,  text: '多希望话题不断，园游会永不打烊' },
     { time: 101, text: '鸡蛋糕跟你嘴角果酱我都想要尝' },
     { time: 107, text: '这个世界约好一起逛' },
+    // 第二段 副歌 (02:52-03:22)
+    { time: 172, text: '我顶着大太阳，只想为你撑伞' },
+    { time: 180, text: '因为捞鱼的蠢游戏我们开始交谈' },
+    { time: 184, text: '多希望话题不断，园游会永不打烊' },
+    { time: 202, text: '这个世界约好一起逛' },
 ];
 
 function parseLRC(text) {
@@ -741,7 +748,9 @@ function initLyrics() {
     // 同步
     audio.addEventListener('timeupdate', () => {
         const t = audio.currentTime;
-        const songLength = 207; // 歌曲长约 3:27
+        const songLength = audio.duration || 207;
+        if (!songLength) return;
+
         const loopTime = t % songLength;
 
         // 循环时重置
