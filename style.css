@@ -906,14 +906,25 @@ footer {
 }
 
 .lyrics-current {
-    font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+    font-family: 'YouYuan', '幼圆', 'STYuanti', 'PingFang SC', sans-serif;
     font-size: 17px;
-    color: #4A1942;
+    font-weight: 500;
+    color: #B0889A;
     background: rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 2px 12px rgba(74, 25, 66, 0.06);
     margin-bottom: 4px;
+}
+
+.lyrics-current .char {
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.lyrics-current .char.active {
+    color: var(--pink-deep);
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(196, 69, 105, 0.3);
 }
 
 .lyrics-next {

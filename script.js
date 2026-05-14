@@ -745,7 +745,24 @@ function initLyrics() {
         }
 
         floatEl.classList.add('visible');
-        currentEl.textContent = lyricsData[idx].text;
+
+        // 当前行逐字高亮
+        const lineStart = lyricsData[idx].time;
+        const lineEnd = idx + 1 < lyricsData.length
+            ? lyricsData[idx + 1].time
+            : Math.min(lineStart + 4, songLength);
+        const lineDuration = Math.max(lineEnd - lineStart, 0.5);
+        const progress = Math.min((loopTime - lineStart) / lineDuration, 1);
+        const text = lyricsData[idx].text;
+        const charCount = text.length;
+        const activeChars = Math.floor(progress * charCount);
+
+        let html = '';
+        for (let c = 0; c < charCount; c++) {
+            html += `<span class="char${c < activeChars ? ' active' : ''}">${text[c]}</span>`;
+        }
+        currentEl.innerHTML = html;
+
         nextEl.textContent = idx + 1 < lyricsData.length ? lyricsData[idx + 1].text : '';
 
         // Footer 高亮
