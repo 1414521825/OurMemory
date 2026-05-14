@@ -879,65 +879,48 @@ footer {
     opacity: 0.8;
 }
 
-/* ---------- 底部歌词字幕 ---------- */
-.subtitle-bar {
+/* ---------- 浮动歌词 ---------- */
+.lyrics-float {
     position: fixed;
-    bottom: 90px;
+    bottom: 96px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 5500;
+    text-align: center;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.5s ease;
 }
 
-.subtitle-bar.visible {
+.lyrics-float.visible {
     opacity: 1;
 }
 
-.subtitle-text {
+.lyrics-line {
     margin: 0;
-    font-family: 'STKaiti', 'KaiTi', '楷体', serif;
-    font-size: 16px;
-    color: var(--text-dark);
-    letter-spacing: 3px;
-    text-align: center;
-    padding: 8px 20px;
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border-radius: 10px;
-    transition: color 0.4s ease, text-shadow 0.4s ease;
+    letter-spacing: 2px;
+    padding: 5px 18px;
+    border-radius: 16px;
     white-space: nowrap;
+    transition: all 0.5s ease;
 }
 
-/* 金句呼吸状态：粉色光晕 */
-.subtitle-text.golden {
-    color: #d4687c;
-    text-shadow:
-        0 0 10px rgba(212, 104, 124, 0.6),
-        0 0 24px rgba(212, 104, 124, 0.35),
-        0 0 44px rgba(196, 80, 105, 0.2);
+.lyrics-current {
+    font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+    font-size: 17px;
+    color: #4A1942;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(74, 25, 66, 0.06);
+    margin-bottom: 4px;
 }
 
-.subtitle-text.golden.breathing {
-    animation: subtitleBreathe 2.6s ease-in-out infinite;
-}
-
-@keyframes subtitleBreathe {
-    0%, 100% {
-        text-shadow:
-            0 0 10px rgba(212, 104, 124, 0.6),
-            0 0 24px rgba(212, 104, 124, 0.35),
-            0 0 44px rgba(196, 80, 105, 0.2);
-    }
-    50% {
-        text-shadow:
-            0 0 18px rgba(212, 104, 124, 0.85),
-            0 0 36px rgba(212, 104, 124, 0.55),
-            0 0 60px rgba(196, 80, 105, 0.35),
-            0 0 90px rgba(196, 80, 105, 0.15);
-    }
+.lyrics-next {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 12px;
+    color: var(--text-light);
+    opacity: 0.5;
 }
 
 /* ---------- Footer 完整歌词 ---------- */
@@ -1206,14 +1189,17 @@ footer {
         text-indent: 1.5em;
     }
 
-    .subtitle-bar {
-        bottom: 72px;
+    .lyrics-float {
+        bottom: 76px;
     }
 
-    .subtitle-text {
-        font-size: 13px;
-        padding: 6px 14px;
-        letter-spacing: 2px;
+    .lyrics-current {
+        font-size: 14px;
+        padding: 5px 14px;
+    }
+
+    .lyrics-next {
+        font-size: 11px;
     }
 
     .lyrics-full {

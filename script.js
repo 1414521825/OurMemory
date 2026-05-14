@@ -685,27 +685,6 @@ function initMusicPlayer() {
 // ==================== 歌词同步 ====================
 let lyricsData = []; // [{time, text}]
 
-// 精选金句 — 覆盖两段主歌+副歌
-const GOLDEN_LINES = [
-    // 第一段 主歌 (00:32-01:00)
-    { time: 32,  text: '琥珀色黄昏像糖在很美的远方' },
-    { time: 36,  text: '你的脸没有化妆我却疯狂爱上' },
-    { time: 52,  text: '我却能够牢记你的气质跟脸庞' },
-    { time: 60,  text: '像我的喜欢，被你看穿' },
-    { time: 66,  text: '我悄悄出现你身旁' },
-    // 第一段 副歌 (01:18-01:47)
-    { time: 78,  text: '我顶着大太阳，只想为你撑伞' },
-    { time: 86,  text: '因为捞鱼的蠢游戏我们开始交谈' },
-    { time: 90,  text: '多希望话题不断，园游会永不打烊' },
-    { time: 101, text: '鸡蛋糕跟你嘴角果酱我都想要尝' },
-    { time: 107, text: '这个世界约好一起逛' },
-    // 第二段 副歌 (02:52-03:22)
-    { time: 172, text: '我顶着大太阳，只想为你撑伞' },
-    { time: 180, text: '因为捞鱼的蠢游戏我们开始交谈' },
-    { time: 184, text: '多希望话题不断，园游会永不打烊' },
-    { time: 202, text: '这个世界约好一起逛' },
-];
-
 function parseLRC(text) {
     const lines = [];
     const regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
@@ -724,16 +703,11 @@ function parseLRC(text) {
 }
 
 function initLyrics() {
-    const subtitleBar = document.getElementById('subtitleBar');
-    const subtitleText = document.getElementById('subtitleText');
+    const floatEl = document.getElementById('lyricsFloat');
+    const currentEl = document.getElementById('lyricsCurrent');
+    const nextEl = document.getElementById('lyricsNext');
     const fullEl = document.getElementById('lyricsFull');
     const audio = document.getElementById('bgm');
-    let lastGoldenText = '';
-    let hideTimer = null;
-    let typeTimer = null;
-
-    // 构建金句文本集合，用于匹配
-    const goldenTextSet = new Set(GOLDEN_LINES.map(g => g.text));
 
     // 加载 LRC 构建 Footer
     fetch(CONFIG.lyricsPath)
@@ -752,84 +726,38 @@ function initLyrics() {
 
     // 同步
     audio.addEventListener('timeupdate', () => {
+        if (lyricsData.length === 0) return;
+
         const t = audio.currentTime;
         const songLength = audio.duration || 207;
-        if (!songLength || lyricsData.length === 0) return;
+        if (!songLength) return;
 
         const loopTime = t % songLength;
 
-        // 循环时重置
-        if (loopTime < GOLDEN_LINES[0].time) {
-            lastGoldenText = '';
-        }
-
-        // 找到当前歌词行
-        let lyricIdx = -1;
+        let idx = -1;
         for (let i = lyricsData.length - 1; i >= 0; i--) {
-            if (loopTime >= lyricsData[i].time) { lyricIdx = i; break; }
+            if (loopTime >= lyricsData[i].time) { idx = i; break; }
         }
 
-        if (lyricIdx < 0) {
-            subtitleBar.classList.remove('visible');
+        if (idx < 0) {
+            floatEl.classList.remove('visible');
             return;
         }
 
-        const currentText = lyricsData[lyricIdx].text;
-        subtitleBar.classList.add('visible');
-
-        // 判断是否金句
-        if (goldenTextSet.has(currentText) && currentText !== lastGoldenText) {
-            lastGoldenText = currentText;
-
-            if (hideTimer) clearTimeout(hideTimer);
-            if (typeTimer) clearTimeout(typeTimer);
-
-            // 逐字打出
-            let charIdx = 0;
-            subtitleText.textContent = '';
-            subtitleText.classList.add('golden');
-            subtitleText.classList.remove('breathing');
-
-            const typeChar = () => {
-                if (charIdx < currentText.length) {
-                    subtitleText.textContent += currentText[charIdx];
-                    charIdx++;
-                    typeTimer = setTimeout(typeChar, 55);
-                } else {
-                    // 打完 → 呼吸
-                    subtitleText.classList.add('breathing');
-                    // 2.5s 后变回普通字幕
-                    hideTimer = setTimeout(() => {
-                        subtitleText.classList.remove('golden', 'breathing');
-                        subtitleText.textContent = currentText;
-                    }, 2500);
-                }
-            };
-            typeTimer = setTimeout(typeChar, 55);
-        } else if (!goldenTextSet.has(currentText)) {
-            // 普通歌词：直接显示
-            subtitleText.textContent = currentText;
-            subtitleText.classList.remove('golden', 'breathing');
-            lastGoldenText = '';
-        }
-        // 金句持续期间（breathing），不更新文本
+        floatEl.classList.add('visible');
+        currentEl.textContent = lyricsData[idx].text;
+        nextEl.textContent = idx + 1 < lyricsData.length ? lyricsData[idx + 1].text : '';
 
         // Footer 高亮
         fullEl.querySelectorAll('p[data-time]').forEach((p, i) => {
-            p.classList.toggle('highlight', i === lyricIdx);
+            p.classList.toggle('highlight', i === idx);
         });
     });
 
-    // 暂停时隐藏
-    audio.addEventListener('pause', () => {
-        subtitleBar.classList.remove('visible');
-        subtitleText.classList.remove('golden', 'breathing');
-        if (hideTimer) clearTimeout(hideTimer);
-        if (typeTimer) clearTimeout(typeTimer);
-    });
-
+    // 暂停 / 播放
+    audio.addEventListener('pause', () => floatEl.classList.remove('visible'));
     audio.addEventListener('play', () => {
-        if (lyricsData.length > 0) subtitleBar.classList.add('visible');
+        if (lyricsData.length > 0) floatEl.classList.add('visible');
     });
 }
 
