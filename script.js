@@ -731,6 +731,7 @@ function initLyrics() {
     const audio = document.getElementById('bgm');
     let lastGoldenIdx = -1;
     let hideTimer = null;
+    let typeTimer = null;
 
     // 加载 LRC 构建 Footer
     fetch(CONFIG.lyricsPath)
@@ -786,22 +787,38 @@ function initLyrics() {
             lastGoldenIdx = goldenIdx;
 
             if (hideTimer) clearTimeout(hideTimer);
+            if (typeTimer) clearTimeout(typeTimer);
 
-            // 金句全屏显示
-            quoteEl.textContent = GOLDEN_LINES[goldenIdx].text;
-            quoteEl.classList.remove('fading');
+            const fullText = GOLDEN_LINES[goldenIdx].text;
+            let charIdx = 0;
+            quoteEl.textContent = '';
+            quoteEl.classList.remove('fading', 'breathing');
             void quoteEl.offsetWidth;
-            quoteEl.classList.add('visible');
+            quoteEl.classList.add('typing');
 
             // 底部字幕变暗
             subtitleBar.classList.add('dimmed');
 
-            // 3.5 秒后金句消散，字幕恢复
-            hideTimer = setTimeout(() => {
-                quoteEl.classList.add('fading');
-                quoteEl.classList.remove('visible');
-                subtitleBar.classList.remove('dimmed');
-            }, 3500);
+            // 逐字打出
+            const typeChar = () => {
+                if (charIdx < fullText.length) {
+                    quoteEl.textContent += fullText[charIdx];
+                    charIdx++;
+                    typeTimer = setTimeout(typeChar, 55);
+                } else {
+                    // 打完 → 开始呼吸
+                    quoteEl.classList.remove('typing');
+                    quoteEl.classList.add('breathing');
+
+                    // 呼吸 2.5s 后消散
+                    hideTimer = setTimeout(() => {
+                        quoteEl.classList.add('fading');
+                        quoteEl.classList.remove('breathing');
+                        subtitleBar.classList.remove('dimmed');
+                    }, 2500);
+                }
+            };
+            typeTimer = setTimeout(typeChar, 55);
         }
 
         // Footer 高亮当前行
@@ -814,9 +831,10 @@ function initLyrics() {
     audio.addEventListener('pause', () => {
         subtitleBar.classList.remove('visible');
         quoteEl.classList.add('fading');
-        quoteEl.classList.remove('visible');
+        quoteEl.classList.remove('typing', 'breathing');
         subtitleBar.classList.remove('dimmed');
         if (hideTimer) clearTimeout(hideTimer);
+        if (typeTimer) clearTimeout(typeTimer);
     });
 
     // 播放时恢复字幕

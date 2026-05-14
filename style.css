@@ -926,36 +926,54 @@ footer {
 }
 
 .golden-text {
-    font-family: var(--font-display);
-    font-size: clamp(18px, 4vw, 30px);
-    color: var(--text-dark);
+    font-family: 'STKaiti', 'KaiTi', '楷体', 'STSong', serif;
+    font-size: clamp(22px, 5vw, 38px);
+    color: #e8c56d;
     text-align: center;
-    letter-spacing: 3px;
-    line-height: 1.8;
-    padding: 14px 28px;
-    max-width: 560px;
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 14px;
-    box-shadow: 0 4px 30px rgba(74, 25, 66, 0.08);
+    letter-spacing: 5px;
+    line-height: 2;
+    padding: 0 36px;
+    max-width: 620px;
+    background: none;
     opacity: 0;
-    transform: translateY(20px);
-    filter: blur(4px);
+    text-shadow:
+        0 0 16px rgba(232, 197, 109, 0.7),
+        0 0 40px rgba(232, 180, 90, 0.4),
+        0 0 80px rgba(200, 150, 60, 0.25),
+        0 0 140px rgba(180, 120, 40, 0.12);
+    transition: opacity 0.3s ease;
 }
 
-.golden-text.visible {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-    transition: opacity 1.6s ease-out, transform 1.6s ease-out, filter 1.2s ease-out;
+.golden-text.typing {
+    opacity: 0.85;
+}
+
+.golden-text.breathing {
+    animation: goldenBreathe 3s ease-in-out infinite;
 }
 
 .golden-text.fading {
     opacity: 0;
-    transform: translateY(-14px);
-    filter: blur(3px);
-    transition: opacity 2s ease-in, transform 2s ease-in, filter 1.5s ease-in;
+    animation: none;
+    transition: opacity 0.8s ease-out;
+}
+
+@keyframes goldenBreathe {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow:
+            0 0 16px rgba(232, 197, 109, 0.7),
+            0 0 40px rgba(232, 180, 90, 0.4),
+            0 0 80px rgba(200, 150, 60, 0.25);
+    }
+    50% {
+        transform: scale(1.04);
+        text-shadow:
+            0 0 26px rgba(232, 197, 109, 0.9),
+            0 0 60px rgba(232, 180, 90, 0.6),
+            0 0 100px rgba(200, 150, 60, 0.4),
+            0 0 180px rgba(180, 120, 40, 0.2);
+    }
 }
 
 /* ---------- Footer 完整歌词 ---------- */
@@ -1225,10 +1243,10 @@ footer {
     }
 
     .golden-text {
-        font-size: 16px;
-        letter-spacing: 2px;
-        padding: 12px 20px;
-        max-width: 320px;
+        font-size: 18px;
+        letter-spacing: 3px;
+        padding: 0 24px;
+        max-width: 340px;
     }
 
     .subtitle-bar {
